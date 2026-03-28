@@ -4,7 +4,6 @@ import random
 import os
 from dotenv import load_dotenv
 
-# --- Load environment variables ---
 basedir = os.path.abspath(os.path.dirname(__file__))
 dotenv_path = os.path.join(basedir, '.env')
 load_dotenv(dotenv_path=dotenv_path)
@@ -14,21 +13,17 @@ if TOKEN is None:
     print("Error: DISCORD_TOKEN is missing.")
     exit()
 
-# --- Intents ---
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-# --- Bot setup ---
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# --- CONSTANTS ---
 MAX_POKEMON_ID = 1025
 ATTEMPTS_PER_TURN = 10
 MIN_PLAYERS = 2
 MAX_PLAYERS = 4
 
-# --- REGION DATA ---
 REGION_RANGES = {
     "Johto": range(152, 252),
     "Kalos": range(650, 722),
@@ -43,7 +38,6 @@ VALID_PATTERNS = [
     ["Galar", "Alola", "Kalos"]
 ]
 
-# --- GAME LOGIC ---
 def draw_pokemon():
     poke_id = random.randint(1, MAX_POKEMON_ID)
     sprite_url = f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{poke_id}.png"
@@ -78,7 +72,6 @@ async def play_turn(ctx, player):
         if region:
             seen.append(region)
 
-        # Create embed for each draw
         embed = discord.Embed(
             title=f"🎲 {player.display_name} drew Pokémon #{poke_id}",
             description=f"Region: {region if region else 'Unknown'}",
@@ -94,12 +87,10 @@ async def play_turn(ctx, player):
 
     return False, seen, None
 
-# --- EVENT ---
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
 
-# --- COMMAND ---
 @bot.command(name="relaygame")
 async def relaygame(ctx):
     players = [m for m in ctx.message.mentions]
@@ -153,5 +144,4 @@ async def relaygame(ctx):
 
     await ctx.send(result)
 
-# --- RUN ---
 bot.run(TOKEN)
